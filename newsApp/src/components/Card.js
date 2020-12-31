@@ -1,24 +1,45 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons'
+import { useDispatch, useSelector } from 'react-redux';
+import * as newsAction from '../redux/actions/newsAction';
+
 const Card = props => {
   
+  const dispatch = useDispatch();
+  const isFav = useSelector(state => state.news.favorites.some(article => article.url === props.url));
+
   return (
-    <TouchableOpacity onPress={() => props.navigation.navigate('NewsDetails')}>
+    <TouchableOpacity onPress={() => {
+      props.navigation.navigate('NewsDetails', {
+        articleUrl: props.url
+      })
+    }}>
       <View style={styles.card}>
         <View style={styles.imageWrapper}>
           <Image 
-            source={require('../../assets/native-woman.jpg')} 
-            // source={{uri: 'https://lh3.googleusercontent.com/proxy/ZTZXN3kueDPuPve_fEcOEHfT80ohRR8QbyYANHtsxEA8mZiVgH0mqYINw74eNrxGmPOg0HSJZ2em7U16Ptxqi7SLaz85X9QeQalfBDHt5P0nNf3FS3KitHsVTslBnQWqo0Xc-QHYCsVHwLDR0CguzLDIvzChpO7a-uxI7yCP3Fggux9xOPXV_W6FRGFjgw'}}
+            // source={require('../../assets/native-woman.jpg')} 
+            source={{uri: props.image ? props.image : '../../assets/native-woman.jpg'}}
             style={styles.image}
           />
         </View>
         <View style={styles.titleWrapper}>
-          <Text style={styles.title}>Dummy title</Text>
-          <MaterialIcons name='favorite-border' color='#72bcd4' size={24} />
+          <Text style={styles.title}>
+            {props.title && props.title.length > 22 ? props.title.slice(0, 22) + '...' : props.title}
+          </Text>
+          <MaterialIcons 
+            name={isFav ? 'favorite' : 'favorite-border'} 
+            color='#72bcd4' 
+            size={24} 
+            onPress={() => {
+              dispatch(newsAction.toggleFavorites(props.url))
+            }}
+          />
         </View>
         <View style={styles.descriptionWrapper}>
-          <Text style={styles.description}>Dummy Description</Text>
+          <Text style={styles.description}>
+            {props.description && props.description.length > 100 ? props.description.slice(0, 100) + '...' : props.description}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>

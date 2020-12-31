@@ -1,13 +1,36 @@
-import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import React, { useEffect } from 'react';
+import { StyleSheet, View, Text, FlatList } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
 
 import Card from '../components/Card';
+import * as newsAction from '../redux/actions/newsAction';
 
 const  NewsListScreen = props => {
  
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(newsAction.fetchArticles())
+  }, [dispatch])
+
+  const {articles} = useSelector(state => state.news.articles)
+  
+  console.log(articles)
 
   return (
-      <Card navigation={props.navigation} />
+    <FlatList 
+    data={articles}
+    keyExtractor={item => item.url}
+    renderItem={({item}) => (
+        <Card 
+          navigation={props.navigation} 
+          title={item.title}
+          image={item.urlToImage}
+          description={item.description}
+          url={item.url}
+        />
+      )}
+      />
   )
 }
 
