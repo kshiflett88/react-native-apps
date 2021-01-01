@@ -15,8 +15,6 @@ const  NewsListScreen = props => {
 
   const {articles} = useSelector(state => state.news.articles)
   
-  console.log(articles)
-
   return (
     <FlatList 
     data={articles}

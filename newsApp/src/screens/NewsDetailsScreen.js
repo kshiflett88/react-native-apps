@@ -35,6 +35,9 @@ const  NewsDetailsScreen = props => {
       <View style={styles.description}>
         <Text style={styles.descriptionText}>{article.description}</Text>
       </View>
+      <View style={styles.content}>
+        <Text style={styles.contentText}>{article.content}</Text>
+      </View>
     </View>
   )
 }
@@ -74,6 +77,13 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     fontSize: 20,
+    fontFamily: 'Ubuntu'
+  },
+  content: {
+    margin: 10
+  },
+  contentText: {
+    fontSize: 26,
     fontFamily: 'Ubuntu'
   }
 });
