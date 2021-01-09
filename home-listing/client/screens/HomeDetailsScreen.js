@@ -1,12 +1,30 @@
-import React from 'react'; 
-import { StyleSheet, View, Text, ScrollView, Image } from 'react-native';
-import { useSelector } from 'react-redux';
+import React, {useEffect} from 'react'; 
+import { StyleSheet, View, Text, ScrollView, Image, Button, Alert } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
+import * as houseAction from '../redux/actions/houseAction';
 
 const HomeDetailsScreen = props => {
 
+  
+  const dispatch = useDispatch();
+
   const {houseId} = props.route.params 
   const house = useSelector(state => state.house.houses.find(house => house._id == houseId))
+  
+  useEffect(() => {
+  }, [])
 
+  const removeHouse = (id) => {
+    console.log(id)
+    dispatch(houseAction.removeHome(id))
+      .then(() => {
+        Alert.alert('Removed Successfully')
+      })
+      .catch(() => {
+        Alert.alert('An error occurred', [{text: 'Ok'}])
+      })
+      props.navigation.navigate('HomeList')
+  }
 
   return (
     <ScrollView>
@@ -38,6 +56,9 @@ const HomeDetailsScreen = props => {
           <Text style={styles.value}>{house.description}</Text>
         </View>
       </View>
+        <View style={styles.buttonContainer}>
+          <Button title="Remove Home" onPress={() => removeHouse(house._id)} />
+        </View>
     </ScrollView>
   )
 }
@@ -70,6 +91,9 @@ const styles = StyleSheet.create({
     fontSize: 18, 
     fontWeight: 'bold',
     flexShrink: 1 
+  },
+  buttonContainer: {
+    marginTop: 20
   }
 });
 
