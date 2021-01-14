@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
 app.use('/api/users', authRoutes)
 
 app.get('/api/user/profile', verifyToken, (req, res) => {
-  res.send('This is the user profile')
+  res.send({success: true, data: req.user})
 })
 
 mongoose.connect('mongodb+srv://kodi_kodes_auth:b12S06ErlM0JXQiy@cluster0.63ibp.mongodb.net/auth_system?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true})

@@ -10,6 +10,12 @@ const User = require('../models/User')
 
 const secretKey = process.env.SECRETKEY;
 
+const generateToken = user => {
+  return jwt.sign(
+    {_id: user._id, email: user.email, fullName: user.fullName}, 
+    secretKey)
+}
+
 
 const validate = [
   check('fullName')
@@ -41,7 +47,7 @@ router.post('/register', validate, async (req, res) => {
   }
 
   const userExist = await User.findOne({email: req.body.email})
-  if (userExist) return res.status(400).send('Email already exists')
+  if (userExist) return res.status(400).send({success: false, message: 'Email already exists'});
 
   const salt = await bcrypt.genSalt();
   const hashPassword = await bcrypt.hash(req.body.password, salt)
@@ -53,9 +59,19 @@ router.post('/register', validate, async (req, res) => {
   })
   try {
     const savedUser = await user.save();
-    res.send({id: savedUser._id, fullName: savedUser.fullName, email: savedUser.email});
+    //create and assign token
+    const token = generateToken(user);
+    res.send({
+      success: true, 
+      data: {
+        id: savedUser._id, 
+        fullName: savedUser.fullName, 
+        email: savedUser.email
+      },
+      token
+    });
   } catch (error) {
-    res.status(400).send(error)
+    res.status(400).send({success: false, error})
   }
 })
 
@@ -69,15 +85,17 @@ router.post('/login', loginValidation, async (req, res) => {
   
   //check if email exists
   const user = await User.findOne({email: req.body.email})
-  if (!user) return res.status(404).send('User is not registered')
+  if (!user) return res.status(404).send({success: false, message: 'User is not registered'})
 
   //check if password is correct
   const validPassword = await bcrypt.compare(req.body.password, user.password)
-  if (!validPassword) return res.status(404).send('Invalid Email or Password')
+  if (!validPassword) return res.status(404).send({success: false, message: 'Invalid Email or Password'})
 
   //create and assign a token scret key usually in .env file
-  const token = jwt.sign({_id: user._id, email: user.email}, secretKey)
-  res.header('auth-token', token).send({message: 'Logged in successfully', token})
+  const token = generateToken(user);
+  res
+    .header('auth-token', token)
+    .send({success: true, message: 'Logged in successfully', token})
 })
 
 module.exports = router
