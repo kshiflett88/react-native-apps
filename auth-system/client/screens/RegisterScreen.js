@@ -5,6 +5,7 @@ import { Formik } from 'formik';
 import * as yup from 'yup';
 import { useDispatch } from 'react-redux';
 import * as authAction from '../redux/actions/authAction';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const formSchema = yup.object({
   fullName: yup.string().required().min(2),
@@ -30,9 +31,14 @@ const RegisterScreen = navData => {
           validationSchema={formSchema}
           onSubmit={(values) => {
             dispatch(authAction.registerUser(values))
-              .then(result => {
+              .then(async result => {
                 if (result.success) {
-                  navData.navigation.navigate('Home')
+                  try {
+                    await AsyncStorage.setItem('token', result.token)
+                    navData.navigation.navigate('Home')
+                  } catch(err) {
+                    console.log(err)
+                  }
                 } else {
                   Alert.alert('Registration failed. Try Again')
                 }

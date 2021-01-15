@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, ScrollView, KeyboardAvoidingView, TextInput, 
-  Image, TouchableOpacity, Platform, Alert } from 'react-native';
+  Image, TouchableOpacity, Platform, Alert, } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { useDispatch } from 'react-redux';
@@ -29,10 +30,14 @@ const LoginScreen = navData => {
           validationSchema={formSchema}
           onSubmit={(values) => {
             dispatch(authAction.loginUser(values))
-              .then( result => {
-                console.log(result)
+              .then(async result => {
                 if (result.success) {
-                  navData.navigation.navigate('Home')
+                  try {
+                    await AsyncStorage.setItem('token', result.token)
+                    navData.navigation.navigate('Home')
+                  } catch(err) {
+                    console.log(err)
+                  }
                 } else {
                   Alert.alert(result.message)
                 }
