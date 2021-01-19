@@ -1,8 +1,11 @@
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 const houses = require('./routes/houses');
+
+app.use(cors());
 
 app.use(express.json());
 
@@ -81,7 +84,7 @@ app.use('/api/houses', houses);
 // })
 const port = process.env.PORT || 3000;
 
-mongoose.connect('mongodb+srv://Kodi_kodes_react-native:8B2HDU3qGzYXoTdb@cluster0.63ibp.mongodb.net/house_app?retryWrites=true&w=majority')
+mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.63ibp.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`, {useUnifiedTopology: true, useNewUrlParser: true })
   .then(result => {
     app.listen(port, () => console.log(`Server is running on port ${port}`));
   })
