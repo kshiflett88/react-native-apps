@@ -58,30 +58,30 @@ app.use('/api/houses', houses);
 //   res.send(home);
 // })
 
-// app.put('/api/listing/:id', (req, res) => {
-//   const home = homes.find(home => home.id === parseInt(req.params.id))
+app.put('/api/listing/:id', (req, res) => {
+  const home = homes.find(home => home.id === parseInt(req.params.id))
   
-//   if (!home) {
-//     return res.status(404).send('The home with given id cannot be found')
-//   }
+  if (!home) {
+    return res.status(404).send('The home with given id cannot be found')
+  }
 
-//   home.type = req.body.type;
-//   home.description = req.body.description;
+  home.type = req.body.type;
+  home.description = req.body.description;
 
-//   res.send(home);
-// })
+  res.send(home);
+})
 
-// app.delete('/api/listing/:id', (req, res) => {
-//   const home = homes.find(home => home.id === parseInt(req.params.id))
+app.delete('/api/listing/:id', (req, res) => {
+  const home = homes.find(home => home.id === parseInt(req.params.id))
   
-//   if (!home) {
-//     return res.status(404).send('The home with given id cannot be found')
-//   }
+  if (!home) {
+    return res.status(404).send('The home with given id cannot be found')
+  }
 
-//   const index = homes.indexOf(home);
-//   homes.splice(index, 1);
-//   res.send(home);
-// })
+  const index = homes.indexOf(home);
+  homes.splice(index, 1);
+  res.send(home);
+})
 const port = process.env.PORT || 3000;
 
 mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.63ibp.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`, {useUnifiedTopology: true, useNewUrlParser: true })
